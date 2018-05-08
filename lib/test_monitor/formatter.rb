@@ -7,6 +7,8 @@ module TestMonitor
     RSpec::Core::Formatters.register self, :dump_summary, :stop, :seed, :close
     NOTIFICATION_URL = ENV['NOTIFICATION_URL'] || 'http://localhost:3000'
 
+    attr_reader :output_hash
+
     def initialize(output)
       super
       @output_hash = {}

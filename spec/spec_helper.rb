@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "test_monitor"
+require "support/formatter_support"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
