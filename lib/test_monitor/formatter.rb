@@ -1,9 +1,11 @@
 require "rspec"
 require "json"
+require "httparty"
 
 module TestMonitor
   class Formatter < RSpec::Core::Formatters::ProgressFormatter
     RSpec::Core::Formatters.register self, :dump_summary, :stop, :seed, :close
+    NOTIFICATION_URL = ENV['NOTIFICATION_URL'] || 'http://localhost:3000'
 
     def initialize(output)
       super
@@ -37,7 +39,7 @@ module TestMonitor
     def close(_notification)
       super(_notification)
 
-      pp @output_hash
+      HTTParty.post(NOTIFICATION_URL, body: @output_hash.to_json, headers: { 'Content-Type' => 'application/json' })
     end
 
     private
