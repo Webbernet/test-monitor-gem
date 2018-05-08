@@ -44,7 +44,7 @@ module FormatterSupport
     result = RSpec::Core::Example::ExecutionResult.new
     result.started_at = ::Time.now
     result.record_finished(metadata.delete(:status) { :passed }, ::Time.now)
-    result.exception = Exception.new if result.status == :failed
+    result.exception = Exception.new('Uh oh') if result.status == :failed
 
     instance_double(RSpec::Core::Example,
                      :description             => "Example",
@@ -53,6 +53,7 @@ module FormatterSupport
                      :execution_result        => result,
                      :location                => "",
                      :location_rerun_argument => "",
+                     :exception               => result.exception,
                      :metadata                => {
                        :shared_group_inclusion_backtrace => []
                      }.merge(metadata)
@@ -67,6 +68,10 @@ module FormatterSupport
     group = class_double "RSpec::Core::ExampleGroup", :description => "Group"
     allow(group).to receive(:parent_groups) { [group] }
     group
+  end
+
+  def stop_notification
+    ::RSpec::Core::Notifications::ExamplesNotification.new reporter
   end
 
   def summary_notification(duration, examples, failed, pending, time, errors = 0)

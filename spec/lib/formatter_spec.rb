@@ -19,4 +19,53 @@ describe TestMonitor::Formatter do
       expect(formatter.output_hash[:summary]).to eq expected
     end
   end
+
+  describe '#stop' do
+    it 'sets :examples field of output_hash' do
+      passed_example = new_example(status: :passed, file_path: './spec/passed_spec.rb', line_number: 3)
+      failed_example = new_example(status: :failed, file_path: './spec/failed_spec.rb', line_number: 7)
+      pending_example = new_example(status: :pending, file_path: './spec/pending_spec.rb', line_number: 9)
+
+      reporter.example_started passed_example
+      reporter.example_started failed_example
+      reporter.example_started pending_example
+
+      now = Time.now
+      allow(Time).to receive(:now).and_return(now)
+
+      send_notification :stop, stop_notification
+
+      expected = [
+        {
+          status: 'passed',
+          description: 'Example',
+          full_description: 'Example',
+          file_path: './spec/passed_spec.rb',
+          line_number: 3,
+          run_time: formatter.output_hash[:examples][0][:run_time],
+          timestamp: now.to_i
+        },
+        {
+          status: 'failed',
+          description: 'Example',
+          full_description: 'Example',
+          file_path: './spec/failed_spec.rb',
+          line_number: 7,
+          run_time: 1.0e-06,
+          timestamp: now.to_i,
+          exception: { class: 'Exception', message: 'Uh oh', backtrace: nil }
+        },
+        {
+          status: 'pending',
+          description: 'Example',
+          full_description: 'Example',
+          file_path: './spec/pending_spec.rb',
+          line_number: 9,
+          run_time: formatter.output_hash[:examples][1][:run_time],
+          timestamp: now.to_i
+        }
+      ]
+      expect(formatter.output_hash[:examples]).to eq expected
+    end
+  end
 end
