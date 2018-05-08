@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "test/monitor/gem"
+require "TestMonitor"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

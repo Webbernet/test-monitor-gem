@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    test-monitor-gem (0.1.0)
+    TestMonitor (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -26,10 +26,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  TestMonitor!
   bundler (~> 1.16)
   rake (~> 10.0)
   rspec (~> 3.0)
-  test-monitor-gem!
 
 BUNDLED WITH
    1.16.1

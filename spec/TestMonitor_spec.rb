@@ -1,6 +1,6 @@
-RSpec.describe Test::Monitor::Gem do
+RSpec.describe TestMonitor do
   it "has a version number" do
-    expect(Test::Monitor::Gem::VERSION).not_to be nil
+    expect(TestMonitor::VERSION).not_to be nil
   end
 
   it "does something useful" do
