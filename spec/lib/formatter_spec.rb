@@ -68,4 +68,20 @@ describe TestMonitor::Formatter do
       expect(formatter.output_hash[:examples]).to eq expected
     end
   end
+
+  describe '#seed' do
+    context 'use random seed' do
+      it 'adds random seed' do
+        send_notification :seed, seed_notification(42)
+        expect(formatter.output_hash[:seed]).to eq(42)
+      end
+    end
+
+    context 'do not use random seed' do
+      it 'does not add random seed' do
+        send_notification :seed, seed_notification(42, false)
+        expect(formatter.output_hash[:seed]).to be_nil
+      end
+    end
+  end
 end
