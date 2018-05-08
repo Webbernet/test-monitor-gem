@@ -70,6 +70,10 @@ module FormatterSupport
     group
   end
 
+  def null_notification
+    ::RSpec::Core::Notifications::NullNotification
+  end
+
   def stop_notification
     ::RSpec::Core::Notifications::ExamplesNotification.new reporter
   end
