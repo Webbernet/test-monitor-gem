@@ -1,5 +1,6 @@
 require "TestMonitor/version"
+require "rspec-core"
+require "TestMonitor/Formatter"
 
 module TestMonitor
-  # Your code goes here...
 end
