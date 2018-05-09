@@ -1,5 +1,5 @@
 module FormatterSupport
-  def send_notification type, notification
+  def send_notification(type, notification)
     reporter.notify type, notification
   end
 
@@ -19,7 +19,7 @@ module FormatterSupport
   end
 
   def config
-    @configuration ||=
+    @config ||=
       begin
         config = RSpec::Core::Configuration.new
         config.output_stream = formatter_output
@@ -45,27 +45,35 @@ module FormatterSupport
     result.started_at = ::Time.now
     result.record_finished(metadata.delete(:status) { :passed }, ::Time.now)
     result.exception = Exception.new('Uh oh') if result.status == :failed
-
-    instance_double(RSpec::Core::Example,
-                     :description             => "Example",
-                     :full_description        => "Example",
-                     :example_group           => group,
-                     :execution_result        => result,
-                     :location                => "",
-                     :location_rerun_argument => "",
-                     :exception               => result.exception,
-                     :metadata                => {
-                       :shared_group_inclusion_backtrace => []
-                     }.merge(metadata)
-                   )
+    mock_example(group, result, metadata)
   end
 
-  def examples(n)
-    Array.new(n) { new_example }
+  def mock_example(group, result, metadata)
+    instance_double(
+      RSpec::Core::Example,
+      mock_example_data(group, result, metadata)
+    )
+  end
+
+  def mock_example_data(group, result, metadata)
+    {
+      description: 'Example',
+      full_description: 'Example',
+      example_group: group,
+      execution_result: result,
+      location: '',
+      location_rerun_argument: '',
+      exception: result.exception,
+      metadata: { shared_group_inclusion_backtrace: [] }.merge(metadata)
+    }
+  end
+
+  def examples(count)
+    Array.new(count) { new_example }
   end
 
   def group
-    group = class_double "RSpec::Core::ExampleGroup", :description => "Group"
+    group = class_double 'RSpec::Core::ExampleGroup', description: 'Group'
     allow(group).to receive(:parent_groups) { [group] }
     group
   end
@@ -78,8 +86,10 @@ module FormatterSupport
     ::RSpec::Core::Notifications::ExamplesNotification.new reporter
   end
 
-  def summary_notification(duration, examples, failed, pending, time, errors = 0)
-    ::RSpec::Core::Notifications::SummaryNotification.new duration, examples, failed, pending, time, errors
+  def summary_notification(examples, failed, pending)
+    ::RSpec::Core::Notifications::SummaryNotification.new(
+      0, examples, failed, pending, 0, 0
+    )
   end
 
   def seed_notification(seed, used = true)
