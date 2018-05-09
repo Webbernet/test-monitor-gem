@@ -6,7 +6,7 @@ module TestMonitor
   # Implements an RSpec formatter that sends JSON reports
   class Formatter < RSpec::Core::Formatters::ProgressFormatter
     RSpec::Core::Formatters.register self, :dump_summary, :stop, :seed, :close
-    NOTIFICATION_URL = ENV['NOTIFICATION_URL'] || 'http://localhost:3000'
+    NOTIFICATION_URL = ENV['NOTIFICATION_URL'] || "http://localhost:3000/#{ENV['TEST_MONITOR_SECRET']}"
     LOGS_ENABLED = true
 
     attr_reader :output_hash
