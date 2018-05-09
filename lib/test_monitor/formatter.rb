@@ -42,9 +42,13 @@ module TestMonitor
     def close(_notification)
       super(_notification)
 
-      log 'Sending a JSON report...'
-      RestClient.post(NOTIFICATION_URL, @output_hash.to_json, { content_type: :json, accept: :json })
-      log 'Done'
+      if reports_enabled?
+        log 'Sending a JSON report...'
+        RestClient.post(NOTIFICATION_URL, @output_hash.to_json, { content_type: :json, accept: :json })
+        log 'Done.'
+      else
+        log 'Skipping JSON report.'
+      end
     end
 
     private
@@ -72,6 +76,10 @@ module TestMonitor
 
     def log(message)
       puts message if LOGS_ENABLED
+    end
+
+    def reports_enabled?
+      !ENV['RUN_TEST_MONITOR'].nil?
     end
   end
 end
