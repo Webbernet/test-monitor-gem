@@ -1,35 +1,38 @@
-# TestMonitor
+# Test Recorder Ruby Client
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/TestMonitor`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+The Test Recorder client sends test metrics
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'TestMonitor'
+gem "test_monitor", git: 'https://github.com/Webbernet/test-monitor-gem'
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install TestMonitor
-
 ## Usage
 
-TODO: Write usage instructions here
+Run it via command line
 
-## Development
+```shell
+bundle exec rspec --format TestMonitor::Formatter
+```
+or include it in your spec_helper.rb
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```
+config.formatter = TestMonitor::Formatter
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Two environment variables should be available. By default the formatter does nothing unless specifically enabled, and also you need to add your unique project secret.
 
-## Contributing
+```shell
+export RUN_TEST_MONITOR=true
+export TEST_MONITOR_SECRET=12endj13rfn1jfasda
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/TestMonitor.
+
+
