@@ -145,7 +145,7 @@ describe TestMonitor::Formatter do
     end
 
     context 'when request fails' do
-      it 'raises and exception' do
+      it 'raises an exception' do
         stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL).
           with(body: {}).
           to_return(status: 404, body: 'Not found', headers: {})
