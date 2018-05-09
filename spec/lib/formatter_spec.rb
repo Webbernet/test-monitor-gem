@@ -29,56 +29,25 @@ describe TestMonitor::Formatter do
   end
 
   describe '#stop' do
-    it 'sets :examples field of output_hash' do
-      passed_example = new_example(
-        status: :passed, file_path: './spec/passed_spec.rb', line_number: 3
-      )
-      failed_example = new_example(
-        status: :failed, file_path: './spec/failed_spec.rb', line_number: 7
-      )
-      pending_example = new_example(
-        status: :pending, file_path: './spec/pending_spec.rb', line_number: 9
-      )
+    let(:now) { Time.now }
 
-      reporter.example_started passed_example
-      reporter.example_started failed_example
-      reporter.example_started pending_example
-
-      now = Time.now
+    before do
       allow(Time).to receive(:now).and_return(now)
+    end
 
+    it 'sets :examples field of output_hash' do
+      reporter.example_started new_passed_example('./spec/passed_spec.rb', 3)
       send_notification :stop, stop_notification
 
+      run_times = get_runtimes(formatter)
+      timestamp = now.to_i
+
       expected = [
-        {
-          status: 'passed',
-          description: 'Example',
-          full_description: 'Example',
-          file_path: './spec/passed_spec.rb',
-          line_number: 3,
-          run_time: formatter.output_hash[:examples][0][:run_time],
-          timestamp: now.to_i
-        },
-        {
-          status: 'failed',
-          description: 'Example',
-          full_description: 'Example',
-          file_path: './spec/failed_spec.rb',
-          line_number: 7,
-          run_time: formatter.output_hash[:examples][1][:run_time],
-          timestamp: now.to_i,
-          exception: { class: 'Exception', message: 'Uh oh', backtrace: nil }
-        },
-        {
-          status: 'pending',
-          description: 'Example',
-          full_description: 'Example',
-          file_path: './spec/pending_spec.rb',
-          line_number: 9,
-          run_time: formatter.output_hash[:examples][2][:run_time],
-          timestamp: now.to_i
-        }
+        new_passed_example_hash(
+          './spec/passed_spec.rb', 3, run_times[0], timestamp
+        )
       ]
+
       expect(formatter.output_hash[:examples]).to eq expected
     end
   end
@@ -88,91 +57,63 @@ describe TestMonitor::Formatter do
       stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL)
         .to_return(status: 200, body: '', headers: {})
       send_notification :close, null_notification
+
       expect(formatter_output.string).to eq "\n"
     end
 
     context 'when reports are enabled' do
+      let(:passed_example) do
+        new_passed_example('./spec/passed_spec.rb', 3)
+      end
+      let(:failed_example) do
+        new_failed_example('./spec/failed_spec.rb', 7)
+      end
+      let(:now) { Time.now }
+
       before do
         allow(ENV).to receive(:[]).and_call_original
         allow(ENV).to receive(:[]).with('RUN_TEST_MONITOR').and_return('true')
+        allow(Time).to receive(:now).and_return(now)
+
+        notification = summary_notification(
+          [passed_example], [failed_example], []
+        )
+        send_notification :dump_summary, notification
+
+        reporter.example_started passed_example
+        reporter.example_started failed_example
+        send_notification :stop, stop_notification
       end
 
       it 'sends a JSON report' do
-        passed_example = new_example(
-          status: :passed, file_path: './spec/passed_spec.rb', line_number: 3
-        )
-        failed_example = new_example(
-          status: :failed, file_path: './spec/failed_spec.rb', line_number: 7
-        )
-        pending_example = new_example(
-          status: :pending, file_path: './spec/pending_spec.rb', line_number: 9
-        )
+        run_times = get_runtimes(formatter)
+        timestamp = now.to_i
 
-        notification = summary_notification(
-          [passed_example], [failed_example], [pending_example]
-        )
-        send_notification :dump_summary, notification
-        reporter.example_started passed_example
-        reporter.example_started failed_example
-        reporter.example_started pending_example
-        send_notification :stop, stop_notification
-
-        now = Time.now
-        allow(Time).to receive(:now).and_return(now)
-
+        examples = [
+          new_passed_example_hash(
+            './spec/passed_spec.rb', 3, run_times[0], timestamp
+          ),
+          new_failed_example_hash(
+            './spec/failed_spec.rb', 7, run_times[1], timestamp
+          )
+        ]
         body = {
-          examples: [
-            {
-              status: 'passed',
-              description: 'Example',
-              full_description: 'Example',
-              file_path: './spec/passed_spec.rb',
-              line_number: 3,
-              run_time: formatter.output_hash[:examples][0][:run_time],
-              timestamp: now.to_i
-            },
-            {
-              status: 'failed',
-              description: 'Example',
-              full_description: 'Example',
-              file_path: './spec/failed_spec.rb',
-              line_number: 7,
-              run_time: formatter.output_hash[:examples][1][:run_time],
-              timestamp: now.to_i,
-              exception: {
-                class: 'Exception',
-                message: 'Uh oh',
-                backtrace: nil
-              }
-            },
-            {
-              status: 'pending',
-              description: 'Example',
-              full_description: 'Example',
-              file_path: './spec/pending_spec.rb',
-              line_number: 9,
-              run_time: formatter.output_hash[:examples][2][:run_time],
-              timestamp: now.to_i
-            }
-          ],
+          examples: examples,
           summary: {
             duration: 0,
             example_count: 1,
             failure_count: 1,
-            pending_count: 1,
+            pending_count: 0,
             errors_outside_of_examples_count: 0
           },
-          summary_line: '1 example, 1 failure, 1 pending'
+          summary_line: '1 example, 1 failure'
         }
+
         stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL)
           .with(body: body)
           .to_return(status: 200, body: '', headers: {})
 
         send_notification :close, null_notification
-
-        expect(WebMock).to have_requested(
-          :post, TestMonitor::Formatter::NOTIFICATION_URL
-        )
       end
 
       context 'when request fails' do
@@ -217,6 +158,42 @@ describe TestMonitor::Formatter do
         send_notification :seed, seed_notification(42, false)
         expect(formatter.output_hash[:seed]).to be_nil
       end
+    end
+  end
+
+  def new_passed_example_hash(path, line_number, run_time, timestamp)
+    new_example_hash('passed', path, line_number, run_time, timestamp)
+  end
+
+  def new_failed_example_hash(path, line_number, run_time, timestamp)
+    new_example_hash('failed', path, line_number, run_time, timestamp).merge(
+      exception: {
+        class: 'Exception',
+        message: 'Uh oh',
+        backtrace: nil
+      }
+    )
+  end
+
+  def new_pending_example_hash(path, line_number, run_time, timestamp)
+    new_example_hash('pending', path, line_number, run_time, timestamp)
+  end
+
+  def new_example_hash(status, path, line_number, run_time, timestamp)
+    {
+      status: status,
+      description: 'Example',
+      full_description: 'Example',
+      file_path: path,
+      line_number: line_number,
+      run_time: run_time,
+      timestamp: timestamp
+    }
+  end
+
+  def get_runtimes(formatter)
+    formatter.output_hash[:examples].map do |example|
+      example[:run_time]
     end
   end
 end
