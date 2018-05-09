@@ -41,7 +41,13 @@ module TestMonitor
     def close(_notification)
       super(_notification)
 
-      HTTParty.post(NOTIFICATION_URL, body: @output_hash.to_json, headers: { 'Content-Type' => 'application/json' })
+      print "Sending a JSON report..."
+      begin
+        HTTParty.post(NOTIFICATION_URL, body: @output_hash.to_json, headers: { 'Content-Type' => 'application/json' })
+        puts "Done"
+      rescue Exception => e
+        puts e
+      end
     end
 
     private
