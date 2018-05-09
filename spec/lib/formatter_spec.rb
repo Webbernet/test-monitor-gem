@@ -1,6 +1,10 @@
 describe TestMonitor::Formatter do
   include FormatterSupport
 
+  before do
+    stub_const('TestMonitor::Formatter::LOGS_ENABLED', false)
+  end
+
   describe '#dump_summary' do
     it 'prints the standard report' do
       send_notification :dump_summary, summary_notification(0, examples(1), examples(1), examples(1), 0)

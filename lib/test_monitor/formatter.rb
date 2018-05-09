@@ -6,6 +6,7 @@ module TestMonitor
   class Formatter < RSpec::Core::Formatters::ProgressFormatter
     RSpec::Core::Formatters.register self, :dump_summary, :stop, :seed, :close
     NOTIFICATION_URL = ENV['NOTIFICATION_URL'] || 'http://localhost:3000'
+    LOGS_ENABLED = true
 
     attr_reader :output_hash
 
@@ -41,10 +42,10 @@ module TestMonitor
     def close(_notification)
       super(_notification)
 
-      print "Sending a JSON report..."
+      log 'Sending a JSON report...'
       begin
         HTTParty.post(NOTIFICATION_URL, body: @output_hash.to_json, headers: { 'Content-Type' => 'application/json' })
-        puts "Done"
+        log 'Done'
       rescue Exception => e
         puts e
       end
@@ -71,6 +72,10 @@ module TestMonitor
           }
         end
       end
+    end
+
+    def log(message)
+      puts message if LOGS_ENABLED
     end
   end
 end
