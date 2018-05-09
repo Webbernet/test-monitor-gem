@@ -143,6 +143,18 @@ describe TestMonitor::Formatter do
 
       expect(WebMock).to have_requested(:post, TestMonitor::Formatter::NOTIFICATION_URL)
     end
+
+    context 'when request fails' do
+      it 'raises and exception' do
+        stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL).
+          with(body: {}).
+          to_return(status: 404, body: 'Not found', headers: {})
+
+        expect {
+          send_notification :close, null_notification
+        }.to raise_error(RestClient::NotFound, '404 Not Found')
+      end
+    end
   end
 
   describe '#seed' do

@@ -1,6 +1,6 @@
 require "rspec"
 require "json"
-require "httparty"
+require "rest-client"
 
 module TestMonitor
   class Formatter < RSpec::Core::Formatters::ProgressFormatter
@@ -43,12 +43,8 @@ module TestMonitor
       super(_notification)
 
       log 'Sending a JSON report...'
-      begin
-        HTTParty.post(NOTIFICATION_URL, body: @output_hash.to_json, headers: { 'Content-Type' => 'application/json' })
-        log 'Done'
-      rescue Exception => e
-        puts e
-      end
+      RestClient.post(NOTIFICATION_URL, @output_hash.to_json, { content_type: :json, accept: :json })
+      log 'Done'
     end
 
     private
