@@ -24,7 +24,7 @@ bundle exec rspec --format TestRecorder::Formatter
 or include it in your spec_helper.rb
 
 ```
-config.formatter = TestRecorder::Formatter
+config.default_formatter = TestRecorder::Formatter
 ```
 
 Two environment variables should be available. By default the formatter does nothing unless specifically enabled, and also you need to add your unique project secret.
