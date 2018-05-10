@@ -170,6 +170,7 @@ describe TestRecorder::Formatter do
 
   def new_failed_example_hash(path, line_number, run_time, timestamp)
     new_example_hash('failed', path, line_number, run_time, timestamp).merge(
+      context: 'failure context',
       exception: {
         class: 'Exception',
         message: 'Uh oh',

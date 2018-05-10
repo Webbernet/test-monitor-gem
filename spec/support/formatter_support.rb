@@ -109,7 +109,10 @@ module FormatterSupport
   end
 
   def new_failed_example(path, line_number)
-    new_example(status: :failed, file_path: path, line_number: line_number)
+    new_example(
+      status: :failed, file_path: path, line_number: line_number,
+      context: 'failure context'
+    )
   end
 
   def new_pending_example(path, line_number)

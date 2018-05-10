@@ -75,11 +75,11 @@ module TestRecorder
       example_hash.tap do |hash|
         e = example.exception
         if e
-          hash[:exception] = {
-            class: e.class.name,
-            message: e.message,
-            backtrace: e.backtrace
-          }
+          hash.merge!(
+            context: example.metadata[:context],
+            exception: { class: e.class.name, message: e.message,
+                         backtrace: e.backtrace }
+          )
         end
       end
     end
