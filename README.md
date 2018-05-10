@@ -46,5 +46,18 @@ export RUN_TEST_MONITOR=true
 export TEST_MONITOR_SECRET=12endj13rfn1jfasda
 ```
 
+## Failure context
 
+To report additional information about a failed example, pass a hash with `:context` key as the last argument to `describe`, `context`, or `it`:
 
+```ruby
+describe 'Failing spec' do
+    variable = 'context data'
+
+    it 'will fail', context: variable do
+        expect(1).to eq 2
+    end
+end
+```
+
+When the test fails, the value of `:context` will be included in the JSON report.
