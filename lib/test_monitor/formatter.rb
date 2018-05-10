@@ -47,11 +47,9 @@ module TestMonitor
 
       if reports_enabled?
         log 'Sending a JSON report...'
-        RestClient.post(
-          NOTIFICATION_URL, @output_hash.to_json,
-          content_type: :json, accept: :json
-        )
+        post_json NOTIFICATION_URL, @output_hash.to_json
         log 'Done.'
+        return
       end
       log 'Skipping JSON report.'
     end
@@ -93,6 +91,10 @@ module TestMonitor
 
     def reports_enabled?
       !ENV['RUN_TEST_MONITOR'].nil?
+    end
+
+    def post_json(url, payload)
+      RestClient.post(url, payload, content_type: :json, accept: :json)
     end
   end
 end
