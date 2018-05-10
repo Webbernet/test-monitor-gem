@@ -1,7 +1,7 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'test_recorder/version'
+require 'test_recorder_ruby/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'test_recorder_ruby'
