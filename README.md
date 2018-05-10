@@ -7,7 +7,7 @@ The Test Recorder client sends test metrics
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "test_monitor", git: 'https://github.com/Webbernet/test-monitor-gem'
+gem "test_recorder_ruby", git: 'https://github.com/Webbernet/test-monitor-gem'
 ```
 
 And then execute:
@@ -19,12 +19,12 @@ And then execute:
 Run it via command line
 
 ```shell
-bundle exec rspec --format TestMonitor::Formatter
+bundle exec rspec --format TestRecorder::Formatter
 ```
 or include it in your spec_helper.rb
 
 ```
-config.formatter = TestMonitor::Formatter
+config.formatter = TestRecorder::Formatter
 ```
 
 Two environment variables should be available. By default the formatter does nothing unless specifically enabled, and also you need to add your unique project secret.

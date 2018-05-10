@@ -2,7 +2,7 @@ require 'rspec'
 require 'json'
 require 'rest-client'
 
-module TestMonitor
+module TestRecorder
   # Implements an RSpec formatter that sends JSON reports
   class Formatter < RSpec::Core::Formatters::ProgressFormatter
     RSpec::Core::Formatters.register self, :dump_summary, :stop, :seed, :close

@@ -1,11 +1,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'test_monitor/version'
+require 'test_recorder/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'test_monitor'
-  spec.version       = TestMonitor::VERSION
+  spec.name          = 'test_recorder_ruby'
+  spec.version       = TestRecorder::VERSION
   spec.authors       = ['Ivan Kuznetsov']
   spec.email         = ['me@jeiwan.ru']
 

@@ -1,8 +1,8 @@
-describe TestMonitor::Formatter do
+describe TestRecorder::Formatter do
   include FormatterSupport
 
   before do
-    stub_const('TestMonitor::Formatter::LOGS_ENABLED', false)
+    stub_const('TestRecorder::Formatter::LOGS_ENABLED', false)
   end
 
   describe '#dump_summary' do
@@ -53,7 +53,7 @@ describe TestMonitor::Formatter do
 
   describe '#close' do
     it 'prints the standard report' do
-      stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL)
+      stub_request(:post, TestRecorder::Formatter::NOTIFICATION_URL)
         .to_return(status: 200, body: '', headers: {})
       send_notification :close, null_notification
 
@@ -107,7 +107,7 @@ describe TestMonitor::Formatter do
           summary_line: '1 example, 1 failure'
         }
 
-        stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL)
+        stub_request(:post, TestRecorder::Formatter::NOTIFICATION_URL)
           .with(body: body)
           .to_return(status: 200, body: '', headers: {})
 
@@ -116,7 +116,7 @@ describe TestMonitor::Formatter do
 
       context 'when request fails' do
         it 'raises an exception' do
-          stub_request(:post, TestMonitor::Formatter::NOTIFICATION_URL)
+          stub_request(:post, TestRecorder::Formatter::NOTIFICATION_URL)
             .with(body: {})
             .to_return(status: 404, body: 'Not found', headers: {})
 
@@ -137,7 +137,7 @@ describe TestMonitor::Formatter do
         send_notification :close, null_notification
 
         expect(WebMock).not_to have_requested(
-          :post, TestMonitor::Formatter::NOTIFICATION_URL
+          :post, TestRecorder::Formatter::NOTIFICATION_URL
         )
       end
     end

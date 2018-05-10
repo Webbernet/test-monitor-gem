@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require 'test_monitor'
+require 'test_recorder'
 require 'support/formatter_support'
 require 'webmock/rspec'
 
