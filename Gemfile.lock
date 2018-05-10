@@ -3,7 +3,7 @@ PATH
   specs:
     test_monitor (0.1.0)
       rest-client (~> 2.0.2)
-      rspec (~> 3.0)
+      rspec (~> 3.6)
 
 GEM
   remote: https://rubygems.org/
