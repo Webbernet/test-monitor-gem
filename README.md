@@ -21,10 +21,22 @@ Run it via command line
 ```shell
 bundle exec rspec --format TestRecorder::Formatter
 ```
+
+or set it in your .rspec:
+
+```
+--format TestRecorder::Formatter
+```
+
 or include it in your spec_helper.rb
 
 ```
-config.default_formatter = TestRecorder::Formatter
+require 'test_recorder_ruby/formatter'
+
+RSpec.configure do |config|
+    config.formatter = TestRecorder::Formatter
+    ...
+end
 ```
 
 Two environment variables should be available. By default the formatter does nothing unless specifically enabled, and also you need to add your unique project secret.
