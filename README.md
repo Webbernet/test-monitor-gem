@@ -7,7 +7,7 @@ The Test Recorder client sends test metrics
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "test_recorder_ruby", git: 'https://github.com/Webbernet/test-monitor-gem'
+gem "test_recorder_ruby", git: 'https://github.com/Webbernet/test-recorder-ruby'
 ```
 
 And then execute:
