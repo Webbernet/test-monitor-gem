@@ -47,7 +47,6 @@ module TestRecorder
       if reports_enabled?
         log 'Sending a JSON report...'
         post_json NOTIFICATION_URL, @output_hash.to_json
-        log 'Done.'
         return
       end
       log 'Skipping JSON report.'
@@ -94,6 +93,10 @@ module TestRecorder
 
     def post_json(url, payload)
       RestClient.post(url, payload, content_type: :json, accept: :json)
+      log 'Done.'
+    rescue StandardError => e
+      output.write "Error sending the report:\n"
+      output.write e.inspect + "\n"
     end
   end
 end

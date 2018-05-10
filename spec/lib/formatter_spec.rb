@@ -120,14 +120,17 @@ describe TestRecorder::Formatter do
       end
 
       context 'when request fails' do
-        it 'raises an exception' do
+        it 'prints the exception' do
           stub_request(:post, TestRecorder::Formatter::NOTIFICATION_URL)
             .with(body: {})
             .to_return(status: 404, body: 'Not found', headers: {})
 
           expect do
             send_notification :close, null_notification
-          end.to raise_error(RestClient::NotFound, '404 Not Found')
+          end.not_to raise_error
+
+          expect(formatter_output.string).to match "Error sending the report:\n"
+          expect(formatter_output.string).to match '404 Not Found'
         end
       end
     end
