@@ -1,5 +1,7 @@
 # Holds methods that help to manipulate with RSpec entities
 module FormatterSupport
+  include RSpecSupport
+
   def send_notification(type, notification)
     reporter.notify type, notification
   end
@@ -92,9 +94,10 @@ module FormatterSupport
   end
 
   def summary_notification(examples, failed, pending)
-    ::RSpec::Core::Notifications::SummaryNotification.new(
-      0, examples, failed, pending, 0
-    )
+    args = [0, examples, failed, pending, 0]
+    args.push(0) if newer_rspec_version?
+
+    ::RSpec::Core::Notifications::SummaryNotification.new(*args)
   end
 
   def seed_notification(seed, used = true)

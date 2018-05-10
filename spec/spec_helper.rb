@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'test_recorder_ruby'
+require 'support/rspec_support'
 require 'support/formatter_support'
 require 'webmock/rspec'
 

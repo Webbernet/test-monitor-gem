@@ -1,5 +1,6 @@
 describe TestRecorder::Formatter do
   include FormatterSupport
+  include RSpecSupport
 
   before do
     stub_const('TestRecorder::Formatter::LOGS_ENABLED', false)
@@ -57,7 +58,11 @@ describe TestRecorder::Formatter do
         .to_return(status: 200, body: '', headers: {})
       send_notification :close, null_notification
 
-      expect(formatter_output.string).to eq ""
+      if newer_rspec_version?
+        expect(formatter_output.string).to eq "\n"
+      else
+        expect(formatter_output.string).to eq ''
+      end
     end
 
     context 'when reports are enabled' do
