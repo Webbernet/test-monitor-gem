@@ -30,7 +30,7 @@ or set it in your .rspec:
 
 or include it in your spec_helper.rb
 
-```
+```ruby
 require 'test_recorder_ruby/formatter'
 
 RSpec.configure do |config|
