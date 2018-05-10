@@ -93,7 +93,7 @@ module FormatterSupport
 
   def summary_notification(examples, failed, pending)
     ::RSpec::Core::Notifications::SummaryNotification.new(
-      0, examples, failed, pending, 0, 0
+      0, examples, failed, pending, 0
     )
   end
 

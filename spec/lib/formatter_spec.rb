@@ -19,7 +19,6 @@ describe TestMonitor::Formatter do
       send_notification :dump_summary, notification
       expected = {
         duration: 0,
-        errors_outside_of_examples_count: 0,
         example_count: 1,
         failure_count: 1,
         pending_count: 1
@@ -58,7 +57,7 @@ describe TestMonitor::Formatter do
         .to_return(status: 200, body: '', headers: {})
       send_notification :close, null_notification
 
-      expect(formatter_output.string).to eq "\n"
+      expect(formatter_output.string).to eq ""
     end
 
     context 'when reports are enabled' do
@@ -103,8 +102,7 @@ describe TestMonitor::Formatter do
             duration: 0,
             example_count: 1,
             failure_count: 1,
-            pending_count: 0,
-            errors_outside_of_examples_count: 0
+            pending_count: 0
           },
           summary_line: '1 example, 1 failure'
         }

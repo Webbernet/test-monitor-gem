@@ -23,8 +23,7 @@ module TestMonitor
         duration: summary.duration,
         example_count: summary.example_count,
         failure_count: summary.failure_count,
-        pending_count: summary.pending_count,
-        errors_outside_of_examples_count: summary.errors_outside_of_examples_count # rubocop:disable Metrics/LineLength
+        pending_count: summary.pending_count
       }
       @output_hash[:summary_line] = summary.totals_line
     end
